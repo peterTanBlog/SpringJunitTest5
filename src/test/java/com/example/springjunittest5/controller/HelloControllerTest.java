@@ -1,9 +1,14 @@
 package com.example.springjunittest5.controller;
 
 import com.example.springjunittest5.SpringJunitTest5Application;
+import com.example.springjunittest5.dao.IHelloDao;
+import com.example.springjunittest5.service.impl.HelloServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +36,11 @@ public class HelloControllerTest {
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
+    @Autowired
+    @InjectMocks
+    HelloServiceImpl helloService;
+    @Mock
+    IHelloDao helloDao;
     @BeforeEach
     public void setup() throws Exception {
         Assert.notNull(webApplicationContext, "'webApplicationContext' must not be null");
@@ -46,6 +56,6 @@ public class HelloControllerTest {
         resultActions.andDo(MockMvcResultHandlers.print());
         resultActions.andExpect(status().is(200));
         resultActions.andExpect(content().string("hello world"));
-
+        Mockito.verify(helloDao, new HelloServiceVerification(1, "world")).hello(Mockito.any(String.class));
     }
 }
